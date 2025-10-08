@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Search & Favorites | Open Library</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+
+    .search-box {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    input {
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #1e40af;
+    }
+
+    h2 {
+      margin-top: 40px;
+      color: #333;
+      text-align: center;
+    }
+
+    .book-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .book {
+      background: white;
+      width: 200px;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .book img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .book h3 {
+      font-size: 16px;
+      margin: 8px 0 4px;
+    }
+
+    .book p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .fav-btn {
+      margin-top: 8px;
+      background-color: #10b981;
+    }
+
+    .fav-btn.remove {
+      background-color: #ef4444;
+    }
+
+    .fav-btn:hover {
+      opacity: 0.9;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Open Library Book Search</h1>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search for a book..." />
+    <button id="searchBtn">Search</button>
+  </div>
+
+  <h2>Search Results</h2>
+  <div id="results" class="book-list"></div>
+
+  <h2>Your Favorites ❤️</h2>
+  <div id="favorites" class="book-list"></div>
+
+  <script>
+    const searchBtn = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+    const resultsDiv = document.getElementById("results");
+    const favoritesDiv = document.getElementById("favorites");
+
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    // Function to fetch books from Open Library
+    async function fetchBooks(query) {
+      resultsDiv.innerHTML = "<p>Loading...</p>";
+      const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      displayResults(data.docs.slice(0, 10));
+    }
+
+    // Function to display search results
+    function displayResults(books) {
+      resultsDiv.innerHTML = "";
+      if (books.length === 0) {
+        resultsDiv.innerHTML = "<p>No books found.</p>";
+        return;
+      }
+
+      books.forEach(book => {
+        const coverId = book.cover_i;
+        const img = coverId
+          ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`
+          : "https://via.placeholder.com/200x260?text=No+Cover";
+
+        const bookDiv = document.createElement("div");
+        bookDiv.className = "book";
+        bookDiv.innerHTML = `
+          <img src="${img}" alt="${book.title}">
+          <h3>${book.title}</h3>
+          <p>${book.author_name ? book.author_name.join(", ") : "Unknown Author"}</p>
+        `;
+
+        const favBtn = document.createElement("button");
+        favBtn.textContent = favorites.some(f => f.key === book.key)
+          ? "Remove from Favorites"
+          : "Add to Favorites";
+        favBtn.className = "fav-btn " + (favorites.some(f => f.key === book.key) ? "remove" : "");
+        favBtn.onclick = () => toggleFavorite(book);
+
+        bookDiv.appendChild(favBtn);
+        resultsDiv.appendChild(bookDiv);
+      });
+    }
+
+    // Function to toggle favorite (add/remove)
+    function toggleFavorite(book) {
+      const exists = favorites.some(f => f.key === book.key);
+      if (exists) {
+        favorites = favorites.filter(f => f.key !== book.key);
+      } else {
+        favorites.push(book);
+      }
+
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      displayFavorites();
+      fetchBooks(searchInput.value);
+    }
+
+    // Function to display favorites
+    function displayFavorites() {
+      favoritesDiv.innerHTML = "";
+      if (favorites.length === 0) {
+        favoritesDiv.innerHTML = "<p>No favorites yet.</p>";
+        return;
+      }
+
+      favorites.forEach(book => {
+        const coverId = book.cover_i;
+        const img = coverId
+          ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`
+          : "https://via.placeholder.com/200x260?text=No+Cover";
+
+        const bookDiv = document.createElement("div");
+        bookDiv.className = "book";
+        bookDiv.innerHTML = `
+          <img src="${img}" alt="${book.title}">
+          <h3>${book.title}</h3>
+          <p>${book.author_name ? book.author_name.join(", ") : "Unknown Author"}</p>
+        `;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove";
+        removeBtn.className = "fav-btn remove";
+        removeBtn.onclick = () => toggleFavorite(book);
+
+        bookDiv.appendChild(removeBtn);
+        favoritesDiv.appendChild(bookDiv);
+      });
+    }
+
+    // Event listener for search
+    searchBtn.addEventListener("click", () => {
+      const query = searchInput.value.trim();
+      if (query === "") {
+        alert("Please enter a book title!");
+        return;
+      }
+      fetchBooks(query);
+    });
+
+    // Display favorites on page load
+    displayFavorites();
+  </script>
+</body>
+</html>
