@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Library Book Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    input {
+      padding: 8px 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 8px 15px;
+      margin-left: 8px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e40af;
+    }
+    .results {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .book {
+      background: white;
+      padding: 15px;
+      width: 200px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .book img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .book h3 {
+      font-size: 16px;
+      margin: 8px 0 4px;
+    }
+    .book p {
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Open Library Book Search</h1>
+
+  <input type="text" id="searchInput" placeholder="Enter book title..." />
+  <button id="searchBtn">Search</button>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    const searchBtn = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+    const resultsDiv = document.getElementById("results");
+
+    searchBtn.addEventListener("click", () => {
+      const query = searchInput.value.trim();
+      if (query === "") {
+        alert("Please enter a book title to search!");
+        return;
+      }
+
+      // Clear old results
+      resultsDiv.innerHTML = "<p>Loading...</p>";
+
+      // Fetch data from Open Library API
+      fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          resultsDiv.innerHTML = ""; // clear loading
+
+          if (data.docs.length === 0) {
+            resultsDiv.innerHTML = "<p>No books found.</p>";
+            return;
+          }
+
+          data.docs.slice(0, 10).forEach(book => {
+            const coverId = book.cover_i;
+            const coverImg = coverId
+              ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`
+              : "https://via.placeholder.com/200x280?text=No+Cover";
+
+            const bookDiv = document.createElement("div");
+            bookDiv.className = "book";
+            bookDiv.innerHTML = `
+              <img src="${coverImg}" alt="${book.title}">
+              <h3>${book.title}</h3>
+              <p>${book.author_name ? book.author_name.join(", ") : "Unknown Author"}</p>
+            `;
+            resultsDiv.appendChild(bookDiv);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error);
+          resultsDiv.innerHTML = "<p>Something went wrong. Please try again.</p>";
+        });
+    });
+  </script>
+</body>
+</html>
