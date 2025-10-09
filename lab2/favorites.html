@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Book Search & Favorites | Open Library</title>
+  <title>Book Search & Favorites</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -129,7 +129,7 @@
       displayResults(data.docs.slice(0, 10));
     }
 
-    // Function to display search results
+    
     function displayResults(books) {
       resultsDiv.innerHTML = "";
       if (books.length === 0) {
@@ -163,7 +163,7 @@
       });
     }
 
-    // Function to toggle favorite (add/remove)
+    
     function toggleFavorite(book) {
       const exists = favorites.some(f => f.key === book.key);
       if (exists) {
@@ -177,7 +177,7 @@
       fetchBooks(searchInput.value);
     }
 
-    // Function to display favorites
+  
     function displayFavorites() {
       favoritesDiv.innerHTML = "";
       if (favorites.length === 0) {
