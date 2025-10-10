@@ -82,10 +82,11 @@
         return;
       }
 
-      // Clear old results
+      
+      const resultsDiv = document.getElementById("results");
       resultsDiv.innerHTML = "<p>Loading...</p>";
 
-      // Fetch data from Open Library API
+      
       fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(data => {
