@@ -4,7 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book Search & Favorites</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
+    /* navbar underline effect to match other pages */
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: #6c4cc9; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
     body {
       font-family: Arial, sans-serif;
       background: #f3f4f6;
@@ -13,7 +19,7 @@
 
     h1 {
       text-align: center;
-      color: #222;
+      color: #6c4cc9;
     }
 
     .search-box {
@@ -34,14 +40,15 @@
       padding: 10px 15px;
       border: none;
       border-radius: 5px;
-      background-color: #2563eb;
+      background-color: #6c4cc9; /* primary purple */
       color: white;
       cursor: pointer;
       font-weight: bold;
+      transition: background-color .2s ease;
     }
 
     button:hover {
-      background-color: #1e40af;
+      background-color: #5b3fc5;
     }
 
     h2 {
@@ -99,12 +106,43 @@
 
   </style>
 </head>
-<body>
-  <h1>Open Library Book Search</h1>
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-800 p-0">
+  <header class="bg-white shadow-md sticky top-0 z-50 w-full">
+    <div class="container mx-auto flex items-center justify-between px-6 py-3">
+      <div class="flex items-center">
+        <i class="fas fa-book-open text-purple-600 text-2xl mr-2"></i>
+        <span class="text-2xl font-bold text-purple-600">Book Explorer</span>
+      </div>
+      <ul class="hidden md:flex space-x-6 text-gray-700 font-medium">
+        <li><a href="../lab1/Index.html" class="nav-link hover:text-purple-600">Home</a></li>
+        <li><a href="../lab2/favorites.html" class="nav-link text-purple-600">Favorites</a></li>
+        <li><a href="../lab3/Fetching.html" class="nav-link hover:text-purple-600">Categories</a></li>
+        <li><a href="../lab1/about.html" class="nav-link hover:text-purple-600">About Us</a></li>
+        <li><a href="../lab1/contact.html" class="nav-link hover:text-purple-600">Contact</a></li>
+      </ul>
+
+      <!-- Right Section (Search + Icons) -->
+      <div class="flex items-center space-x-4">
+        <div class="relative hidden md:block">
+          <a href="../lab2/favorites.html"
+            type="text" 
+            placeholder="Search books..." 
+            class="border border-gray-300 rounded-full px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64"
+          ></a>
+          <i class="fas fa-search text-gray-400 absolute left-3 top-3"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+
+  
+ <h1 class="pt-[50px] text-2xl pb-[20px]">Open Library Book Search</h1>
 
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search for a book..." />
-    <button id="searchBtn">Search</button>
+ <input type="text" id="searchInput" class="p-2 w-[400px]" placeholder="Enter book title..." />
+    <button id="searchBtn" class=" bg-purple-700 text-white p-2 ">Search</button>
   </div>
 
   <h2>Search Results</h2>
@@ -222,5 +260,59 @@
     // Display favorites on page load
     displayFavorites();
   </script>
-</body>
-</html>
+  </main>
+
+  <!-- Unified Footer -->
+  <footer class="bg-gray-900 text-gray-300">
+    <div class="container mx-auto px-6 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div>
+          <div class="flex items-center mb-4">
+            <i class="fas fa-book-open text-purple-500 text-2xl mr-2"></i>
+            <span class="text-xl font-bold text-white">Book Explorer</span>
+          </div>
+          <p class="mb-4">Discover, explore, and organize your reading journey with Book Explorer.</p>
+          <div class="flex space-x-3 mt-4">
+            <a href="#" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+            <li><a href="../lab1/Index.html#home" class="hover:text-white transition">Home</a></li>
+            <li><a href="../lab1/Index.html#shop" class="hover:text-white transition">Shop</a></li>
+            <li><a href="../lab1/Index.html#categories" class="hover:text-white transition">Categories</a></li>
+            <li><a href="../lab1/about.html" class="hover:text-white transition">About Us</a></li>
+            <li><a href="../lab1/contact.html" class="hover:text-white transition">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold mb-4">Explore</h3>
+          <ul class="space-y-2">
+            <li><a href="../lab2/favorites.html" class="hover:text-white transition">Favorites</a></li>
+            <li><a href="../lab3/Fetching.html" class="hover:text-white transition">Categories (API)</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold mb-4">Newsletter</h3>
+          <p class="mb-4">Subscribe to get updates on new releases and recommendations.</p>
+          <div class="flex">
+            <input type="email" placeholder="Your email" class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500 w-full">
+            <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-r-lg transition">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-sm">
+        <p class="mb-4 md:mb-0">&copy; 2024 Book Explorer. All rights reserved.</p>
+        <div class="flex items-center space-x-4">
+          <a href="#" class="hover:text-white transition">Privacy</a>
+          <span class="text-gray-600">|</span>
+          <a href="#" class="hover:text-white transition">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
